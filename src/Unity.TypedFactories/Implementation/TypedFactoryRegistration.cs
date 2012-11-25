@@ -6,8 +6,6 @@
 
 namespace Unity.TypedFactories.Implementation
 {
-    using Castle.DynamicProxy;
-
     using Microsoft.Practices.Unity;
 
     /// <summary>
@@ -16,7 +14,7 @@ namespace Unity.TypedFactories.Implementation
     /// <typeparam name="TFactory">
     /// The interface of the factory.
     /// </typeparam>
-    internal class TypedFactoryRegistration<TFactory> : ITypedFactoryRegistration
+    internal class TypedFactoryRegistration<TFactory> : TypedFactoryRegistrationBase
         where TFactory : class
     {
         #region Constructors and Destructors
@@ -28,18 +26,9 @@ namespace Unity.TypedFactories.Implementation
         /// The target Unity container on which to perform the registrations.
         /// </param>
         public TypedFactoryRegistration(IUnityContainer container)
+            : base(container)
         {
-            this.Container = container;
         }
-
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Gets the target Unity container on which to perform the registrations.
-        /// </summary>
-        public IUnityContainer Container { get; private set; }
 
         #endregion
 
@@ -48,9 +37,11 @@ namespace Unity.TypedFactories.Implementation
         /// <summary>
         /// Defines the concrete type which the factory will create.
         /// </summary>
-        public void ForConcreteType<TTo>()
+        public override void ForConcreteType<TTo>()
         {
-            this.Container.RegisterInstance(new ProxyGenerator().CreateInterfaceProxyWithoutTarget<TFactory>(new FactoryInterceptor<TTo>(this.Container)));
+            this.Container.RegisterType<TFactory>(
+                new InjectionFactory(
+                    container => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new FactoryInterceptor<TTo>(container))));
         }
 
         #endregion
