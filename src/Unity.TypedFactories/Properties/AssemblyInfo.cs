@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Unity.TypedFactories")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Developer In The Flow")]
 [assembly: AssemblyProduct("Unity.TypedFactories")]
 [assembly: AssemblyCopyright("Copyright © Pedro Pombeiro 2012")]
 [assembly: AssemblyTrademark("")]

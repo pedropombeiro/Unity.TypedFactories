@@ -14,6 +14,10 @@ namespace Unity.TypedFactories.Implementation
 
     using Microsoft.Practices.Unity;
 
+    /// <summary>
+    /// Defines an <see cref="IInterceptor"/> implementation which implements the factory methods, by passing the method arguments by name into <see cref="TConcrete"/>'s constructor.
+    /// </summary>
+    /// <typeparam name="TConcrete">The concrete class which will be constructed by the factory.</typeparam>
     public class FactoryInterceptor<TConcrete> : IInterceptor
     {
         #region Constructors and Destructors
@@ -32,6 +36,9 @@ namespace Unity.TypedFactories.Implementation
 
         #region Properties
 
+        /// <summary>
+        /// The injected <see cref="IUnityContainer"/> instance which will be used to resolve the <see cref="TConcrete"/> type.
+        /// </summary>
         private IUnityContainer Container { get; set; }
 
         #endregion
@@ -53,7 +60,7 @@ namespace Unity.TypedFactories.Implementation
             }
 
             invocation.ReturnValue = invocation.Arguments.Any()
-                                         ? this.Container.Resolve(typeof(TConcrete), GetDependencyOverrides(invocation).ToArray())
+                                         ? this.Container.Resolve(typeof(TConcrete), GetResolverOverridesFor(invocation).ToArray())
                                          : this.Container.Resolve(typeof(TConcrete));
         }
 
@@ -61,7 +68,7 @@ namespace Unity.TypedFactories.Implementation
 
         #region Methods
 
-        private static IEnumerable<ResolverOverride> GetDependencyOverrides(IInvocation invocation)
+        private static IEnumerable<ResolverOverride> GetResolverOverridesFor(IInvocation invocation)
         {
             var arguments = invocation.Arguments;
             var parameterInfos = invocation.Method.GetParameters();
