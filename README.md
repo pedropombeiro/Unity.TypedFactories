@@ -24,7 +24,9 @@ The factory interface is configured for a given concrete type, and the factory m
 
 		#endregion
 	}
-		
+
+In case an argument from the constructor is not provided by either the factory method or the IoC container, then a ConstructorArgumentsMismatchException exception will be thrown, detailing the missing arguments.
+
 Known limitations
 -----------------
 
