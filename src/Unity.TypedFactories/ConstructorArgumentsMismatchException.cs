@@ -22,14 +22,14 @@ namespace Unity.TypedFactories
         #region Public Properties
 
         /// <summary>
-        /// The list of parameters from the factory method which were not found in the concrete type's constructor.
+        /// Gets the list of parameters from the factory method which were not found in the concrete type's constructor.
         /// </summary>
         public ParameterInfo[] NonMatchingParameters { get; private set; }
 
         /// <summary>
-        /// The <see cref="Type"/> of the Typed Factory interface.
+        /// Gets the <see cref="Type"/> of the Typed Factory interface.
         /// </summary>
-        public Type TypedFactoryType { get; set; }
+        public Type TypedFactoryType { get; private set; }
 
         #endregion
     }
