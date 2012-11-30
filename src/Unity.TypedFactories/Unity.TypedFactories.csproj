@@ -58,6 +58,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructorArgumentsMismatchException.cs" />
     <Compile Include="Implementation\FactoryInterceptor.cs" />
     <Compile Include="Implementation\TypedFactoryRegistrationBase.cs" />
     <Compile Include="UnityTypedFactoryExtensions.cs" />

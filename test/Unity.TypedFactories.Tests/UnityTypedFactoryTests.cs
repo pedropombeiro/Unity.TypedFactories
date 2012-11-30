@@ -110,6 +110,25 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ConstructorArgumentsMismatchException))]
+        public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_with_non_matching_parameter_name_then_ConstructorArgumentsMismatchException_is_thrown()
+        {
+            // Arrange
+            var unityContainer = new UnityContainer();
+
+            unityContainer
+                .RegisterTypedFactory<ITest2Factory>()
+                .ForConcreteType<TestClass2NonMatchingName>();
+
+            const string TestValue = "TestValue";
+            ISomeInstance someInstance = new SomeInstance();
+
+            // Act
+            var factory = unityContainer.Resolve<ITest2Factory>();
+            factory.Create(TestValue, someInstance, string.Empty);
+        }
+
+        [Test]
         [ExpectedException(typeof(ArgumentNullException))]
         public void given_instantiated_Sut_when_Create_is_called_with_two_parameters_and_parameter_1_is_null_then_ArgumentNullException_is_thrown()
         {
@@ -252,6 +271,34 @@ namespace Unity.TypedFactories.Tests
                 this.TestProperty1 = testProperty1;
                 this.TestProperty2 = someInstance;
                 this.TestProperty3 = testProperty3;
+            }
+
+            #endregion
+
+            #region Public Properties
+
+            public ISomeService InjectedService { get; private set; }
+
+            public string TestProperty1 { get; private set; }
+
+            public ISomeInstance TestProperty2 { get; private set; }
+
+            public string TestProperty3 { get; private set; }
+
+            #endregion
+        }
+
+        [UsedImplicitly]
+        private class TestClass2NonMatchingName : ITest2
+        {
+            #region Constructors and Destructors
+
+            public TestClass2NonMatchingName(ISomeInstance someInstance, string nonMatchingTestProperty1, ISomeService someService, string nonMatchingTestProperty3)
+            {
+                this.InjectedService = someService;
+                this.TestProperty1 = nonMatchingTestProperty1;
+                this.TestProperty2 = someInstance;
+                this.TestProperty3 = nonMatchingTestProperty3;
             }
 
             #endregion
