@@ -57,7 +57,7 @@ namespace Unity.TypedFactories.Implementation
 
             if (!returnType.IsAssignableFrom(typeof(TConcrete)))
             {
-                throw new InvalidCastException(string.Format("The concrete type {0} does not implement the factory return type {1}", typeof(TConcrete).FullName, returnType.FullName));
+                throw new InvalidCastException(string.Format("The concrete type {0} does not implement the factory method return type {1}", typeof(TConcrete).FullName, returnType.FullName));
             }
 
             try
@@ -122,7 +122,7 @@ namespace Unity.TypedFactories.Implementation
                 var parameterInfo = parameterInfos.ElementAt(parameterIndex);
                 var parameterValue = arguments[parameterIndex];
 
-                yield return new ParameterOverride(parameterInfo.Name, parameterValue);
+                yield return new ParameterOverride(parameterInfo.Name, new InjectionParameter(parameterInfo.ParameterType, parameterValue));
             }
         }
 

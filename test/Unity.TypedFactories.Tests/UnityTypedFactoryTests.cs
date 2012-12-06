@@ -85,9 +85,46 @@ namespace Unity.TypedFactories.Tests
             #endregion
         }
 
+        public interface ITest4
+        {
+            #region Public Properties
+
+            Type TypeParam { get; }
+
+            #endregion
+        }
+
+        public interface ITest4Factory
+        {
+            #region Public Methods and Operators
+
+            ITest4 Create(Type typeParam);
+
+            #endregion
+        }
+
         #endregion
 
         #region Public Methods and Operators
+
+        [Test]
+        public void given_instantiated_Sut_when_Create_is_called_with_Type_parameter_then_Type_value_is_passed_correctly()
+        {
+            // Arrange
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ITest4Factory>()
+                    .ForConcreteType<TestClass4>();
+
+                // Act
+                var factory = unityContainer.Resolve<ITest4Factory>();
+                var test4 = factory.Create(typeof(Decimal));
+
+                // Assert
+                Assert.AreEqual(typeof(Decimal), test4.TypeParam);
+            }
+        }
 
         [Test]
         public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_then_TestProperty1_on_resulting_TestClass_matches_specified_value()
@@ -129,8 +166,7 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void given_instantiated_Sut_when_Create_is_called_with_two_parameters_and_parameter_1_is_null_then_ArgumentNullException_is_thrown()
+        public void given_instantiated_Sut_when_Create_is_called_with_two_parameters_and_parameter_1_is_null_then_object_is_resolved_correctly()
         {
             // Arrange
             using (var unityContainer = new UnityContainer())
@@ -139,20 +175,23 @@ namespace Unity.TypedFactories.Tests
                     .RegisterTypedFactory<ITest2Factory>()
                     .ForConcreteType<TestClass2>();
 
-                const string TestValue = null;
                 ISomeInstance someInstance = new SomeInstance();
 
                 unityContainer.RegisterType<ISomeService, SomeService>(new ContainerControlledLifetimeManager());
 
                 // Act
                 var factory = unityContainer.Resolve<ITest2Factory>();
-                factory.Create(TestValue, someInstance, string.Empty);
+                var testClass2 = factory.Create(null, someInstance, string.Empty);
+
+                // Assert
+                Assert.AreSame(someInstance, testClass2.TestProperty2);
+                Assert.IsNull(testClass2.TestProperty1);
+                Assert.AreSame(string.Empty, testClass2.TestProperty3);
             }
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void given_instantiated_Sut_when_Create_is_called_with_two_parameters_and_parameter_2_is_null_then_ArgumentNullException_is_thrown()
+        public void given_instantiated_Sut_when_Create_is_called_with_two_parameters_and_parameter_2_is_null_then_object_is_resolved_correctly()
         {
             // Arrange
             using (var unityContainer = new UnityContainer())
@@ -168,7 +207,12 @@ namespace Unity.TypedFactories.Tests
 
                 // Act
                 var factory = unityContainer.Resolve<ITest2Factory>();
-                factory.Create(string.Empty, someInstance, TestValue);
+                var testClass2 = factory.Create(string.Empty, someInstance, TestValue);
+
+                // Assert
+                Assert.AreSame(someInstance, testClass2.TestProperty2);
+                Assert.IsEmpty(testClass2.TestProperty1);
+                Assert.AreSame(TestValue, testClass2.TestProperty3);
             }
         }
 
@@ -217,6 +261,24 @@ namespace Unity.TypedFactories.Tests
         }
 
         #endregion
+
+        internal class TestClass4 : ITest4
+        {
+            #region Constructors and Destructors
+
+            public TestClass4(Type typeParam)
+            {
+                this.TypeParam = typeParam;
+            }
+
+            #endregion
+
+            #region Public Properties
+
+            public Type TypeParam { get; private set; }
+
+            #endregion
+        }
 
         [UsedImplicitly]
         private class SomeInstance : ISomeInstance
