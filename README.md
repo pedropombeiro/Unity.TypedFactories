@@ -1,14 +1,14 @@
 Unity.TypedFactories
 ====================
 
-This project provides automatic Abstract Factory functionality similar to [Castle.Windsor Typed Factories](http://docs.castleproject.org/Default.aspx?Page=Typed-Factory-Facility&NS=Windsor&AspxAutoDetectCookieSupport=1), for the [Unity](http://unity.codeplex.com/) IoC container.
+This project provides automatic Automatic Factory functionality similar to [Castle.Windsor Typed Factories](http://docs.castleproject.org/Default.aspx?Page=Typed-Factory-Facility&NS=Windsor&AspxAutoDetectCookieSupport=1), for the [Unity](http://unity.codeplex.com/) IoC container.
 
 Usage
 -----
 
 The library takes as an input an interface to be used as the factory interface.
 
-It generates a proxy object upon resolution of this interface, with an implementation for each method of the interface which returns a reference object.
+It generates a proxy object upon resolution of this factory interface, with an implementation for each method of the interface that returns a reference object.
 
 The factory interface is configured for a given concrete type, and the factory method's arguments are matched by name to the created object's constructor arguments.
 
