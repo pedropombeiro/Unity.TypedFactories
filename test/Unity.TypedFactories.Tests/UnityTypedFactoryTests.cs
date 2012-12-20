@@ -127,6 +127,30 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
+        [ExpectedException(typeof(ResolutionFailedException))]
+        public void given_instantiated_Sut_when_Create_is_called_with_one_of_the_parameters_not_resolvable_then_ResolutionFailedException_is_thrown()
+        {
+            // Arrange
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ITest2Factory>()
+                    .ForConcreteType<TestClass2>();
+
+                ISomeInstance someInstance = new SomeInstance();
+
+                // Act
+                var factory = unityContainer.Resolve<ITest2Factory>();
+                var testClass2 = factory.Create(null, someInstance, string.Empty);
+
+                // Assert
+                Assert.AreSame(someInstance, testClass2.TestProperty2);
+                Assert.IsNull(testClass2.TestProperty1);
+                Assert.AreSame(string.Empty, testClass2.TestProperty3);
+            }
+        }
+
+        [Test]
         public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_then_TestProperty1_on_resulting_TestClass_matches_specified_value()
         {
             // Arrange

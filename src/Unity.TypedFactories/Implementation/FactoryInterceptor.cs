@@ -88,20 +88,23 @@ namespace Unity.TypedFactories.Implementation
                         }
                     }
 
-                    var selectedConstructorKvp = (from kvp in nonExistingParamsPerConstructorDictionary
-                                                  orderby kvp.Value.Length
-                                                  select kvp).FirstOrDefault();
+                    if (nonExistingParamsPerConstructorDictionary.Any())
+                    {
+                        var selectedConstructorKvp = (from kvp in nonExistingParamsPerConstructorDictionary
+                                                      orderby kvp.Value.Length
+                                                      select kvp).FirstOrDefault();
 
-                    var message = string.Format("Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.",
-                        invocation.Method.ReflectedType.Name,
-                        resolutionFailedException.TypeRequested,
-                        string.Join(", ", selectedConstructorKvp.Value.Select(paramInfo => paramInfo.Name)));
+                        var message = string.Format("Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.",
+                            invocation.Method.ReflectedType.Name,
+                            resolutionFailedException.TypeRequested,
+                            string.Join(", ", selectedConstructorKvp.Value.Select(paramInfo => paramInfo.Name)));
 
-                    throw new ConstructorArgumentsMismatchException(
-                        message,
-                        invocation.Method.ReflectedType,
-                        selectedConstructorKvp.Value,
-                        resolutionFailedException);
+                        throw new ConstructorArgumentsMismatchException(
+                            message,
+                            invocation.Method.ReflectedType,
+                            selectedConstructorKvp.Value,
+                            resolutionFailedException);
+                    }
                 }
 
                 throw;
