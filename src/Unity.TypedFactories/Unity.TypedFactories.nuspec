@@ -19,6 +19,6 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="lib\net40\Unity.TypedFactories.dll" target="lib\net40\Unity.TypedFactories.dll" />
+        <file src="$RootFolder$\src\Unity.TypedFactories\bin\Release\Unity.TypedFactories.dll" target="lib\net40\Unity.TypedFactories.dll" />
     </files>
 </package>
