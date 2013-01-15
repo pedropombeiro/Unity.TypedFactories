@@ -8,6 +8,8 @@ namespace Unity.TypedFactories
     using System;
     using System.Reflection;
 
+    using JetBrains.Annotations;
+
     using Microsoft.Practices.Unity;
 
     /// <summary>
@@ -46,11 +48,13 @@ namespace Unity.TypedFactories
         /// <summary>
         /// Gets the list of parameters from the factory method which were not found in the concrete type's constructor.
         /// </summary>
+        [PublicAPI]
         public ParameterInfo[] NonMatchingParameters { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="Type"/> of the Typed Factory interface.
         /// </summary>
+        [PublicAPI]
         public Type TypedFactoryType { get; private set; }
 
         #endregion
