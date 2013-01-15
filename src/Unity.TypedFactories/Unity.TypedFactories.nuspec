@@ -14,7 +14,4 @@
         <copyright>Copyright © Pedro Pombeiro 2012</copyright>
         <tags>Unity IoC DI Typed Factories Fluent</tags>
     </metadata>
-    <files>
-        <file src="$RootFolder$\src\Unity.TypedFactories\bin\Release\Unity.TypedFactories.dll" target="lib\net40\Unity.TypedFactories.dll" />
-    </files>
 </package>
