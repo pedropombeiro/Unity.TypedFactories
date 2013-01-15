@@ -1,9 +1,8 @@
-// // --------------------------------------------------------------------------------------------------------------------
-// // <copyright file="FactoryInterceptor.cs" company="Liebherr International AG">
-// //   © 2012 Liebherr. All rights reserved.
-// // </copyright>
-// // --------------------------------------------------------------------------------------------------------------------
-
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="FactoryInterceptor.cs" company="Developer In The Flow">
+//   © 2012 Pedro Pombeiro
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 namespace Unity.TypedFactories.Implementation
 {
     using System;
@@ -23,6 +22,15 @@ namespace Unity.TypedFactories.Implementation
     {
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FactoryInterceptor{TConcrete}"/> class.
+        /// </summary>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the injected <paramref name="container"/> is null.
+        /// </exception>
         public FactoryInterceptor(IUnityContainer container)
         {
             if (container == null)
@@ -38,15 +46,16 @@ namespace Unity.TypedFactories.Implementation
         #region Properties
 
         /// <summary>
-        /// The injected <see cref="IUnityContainer"/> instance which will be used to resolve the <see cref="TConcrete"/> type.
+        /// Gets or sets the injected <see cref="IUnityContainer"/> instance which will be used to resolve the <see cref="TConcrete"/> type.
         /// </summary>
         private IUnityContainer Container { get; set; }
 
         #endregion
 
-        #region Public Methods and Operators
+        #region Explicit Interface Methods
 
-        public void Intercept(IInvocation invocation)
+        /// <inheritdoc />
+        void IInterceptor.Intercept(IInvocation invocation)
         {
             if (invocation.Method == null || !invocation.Method.ReturnType.IsInterface)
             {
@@ -94,15 +103,16 @@ namespace Unity.TypedFactories.Implementation
                                                       orderby kvp.Value.Length
                                                       select kvp).FirstOrDefault();
 
-                        var message = string.Format("Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.",
-                            invocation.Method.ReflectedType.Name,
-                            resolutionFailedException.TypeRequested,
+                        var message = string.Format(
+                            "Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.", 
+                            invocation.Method.ReflectedType.Name, 
+                            resolutionFailedException.TypeRequested, 
                             string.Join(", ", selectedConstructorKvp.Value.Select(paramInfo => paramInfo.Name)));
 
                         throw new ConstructorArgumentsMismatchException(
-                            message,
-                            invocation.Method.ReflectedType,
-                            selectedConstructorKvp.Value,
+                            message, 
+                            invocation.Method.ReflectedType, 
+                            selectedConstructorKvp.Value, 
                             resolutionFailedException);
                     }
                 }
@@ -115,6 +125,15 @@ namespace Unity.TypedFactories.Implementation
 
         #region Methods
 
+        /// <summary>
+        /// Builds a list consisting of one <see cref="ParameterOverride"/> instance for each argument of the method in <paramref name="invocation"/>.
+        /// </summary>
+        /// <param name="invocation">
+        /// The invocation details.
+        /// </param>
+        /// <returns>
+        /// The collection of <see cref="ParameterOverride"/>s.
+        /// </returns>
         private static IEnumerable<ResolverOverride> GetResolverOverridesFor(IInvocation invocation)
         {
             var arguments = invocation.Arguments;

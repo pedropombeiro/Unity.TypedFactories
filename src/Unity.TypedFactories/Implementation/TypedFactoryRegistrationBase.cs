@@ -1,13 +1,24 @@
+// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="TypedFactoryRegistrationBase.cs" company="Developer In The Flow">
+//   © 2012 Pedro Pombeiro
+// </copyright>
+// --------------------------------------------------------------------------------------------------------------------
 namespace Unity.TypedFactories.Implementation
 {
     using Castle.DynamicProxy;
 
     using Microsoft.Practices.Unity;
 
+    /// <summary>
+    /// Implements the <see cref="ProxyGenerator"/> property on the fluent interface implementation for registering typed factories.
+    /// </summary>
     internal abstract class TypedFactoryRegistrationBase : ITypedFactoryRegistration
     {
         #region Static Fields
 
+        /// <summary>
+        /// The Castle proxy generator.
+        /// </summary>
         private static ProxyGenerator proxyGenerator;
 
         #endregion
@@ -15,12 +26,12 @@ namespace Unity.TypedFactories.Implementation
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypedFactoryRegistration{TFactory}"/> class.
+        /// Initializes a new instance of the <see cref="TypedFactoryRegistrationBase"/> class.
         /// </summary>
         /// <param name="container">
         /// The target Unity container on which to perform the registrations.
         /// </param>
-        public TypedFactoryRegistrationBase(IUnityContainer container)
+        protected TypedFactoryRegistrationBase(IUnityContainer container)
         {
             this.Container = container;
         }
@@ -38,6 +49,9 @@ namespace Unity.TypedFactories.Implementation
 
         #region Properties
 
+        /// <summary>
+        /// Gets the Castle proxy generator. A new instance will be created upon the first access, and reused afterwards.
+        /// </summary>
         protected static ProxyGenerator ProxyGenerator
         {
             get { return proxyGenerator ?? (proxyGenerator = new ProxyGenerator()); }
@@ -47,7 +61,13 @@ namespace Unity.TypedFactories.Implementation
 
         #region Public Methods and Operators
 
-        public abstract void ForConcreteType<TTo>();
+        /// <summary>
+        /// Defines the concrete type which the factory will create.
+        /// </summary>
+        /// <typeparam name="TTo">
+        /// The concrete type which the factory will instantiate.
+        /// </typeparam>
+        public abstract void ForConcreteType<TTo>() where TTo : class;
 
         #endregion
     }

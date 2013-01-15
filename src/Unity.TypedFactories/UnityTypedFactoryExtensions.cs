@@ -1,9 +1,8 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnityTypedFactoryExtensions.cs" company="Pedro Pombeiro">
+// <copyright file="UnityTypedFactoryExtensions.cs" company="Developer In The Flow">
 //   © 2012 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace Unity.TypedFactories
 {
     using Microsoft.Practices.Unity;

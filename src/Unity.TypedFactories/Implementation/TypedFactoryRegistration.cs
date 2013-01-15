@@ -1,9 +1,8 @@
 // --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TypedFactoryRegistration.cs" company="Pedro Pombeiro">
+// <copyright file="TypedFactoryRegistration.cs" company="Developer In The Flow">
 //   © 2012 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace Unity.TypedFactories.Implementation
 {
     using Microsoft.Practices.Unity;
@@ -37,6 +36,9 @@ namespace Unity.TypedFactories.Implementation
         /// <summary>
         /// Defines the concrete type which the factory will create.
         /// </summary>
+        /// <typeparam name="TTo">
+        /// The concrete type which the factory will instantiate.
+        /// </typeparam>
         public override void ForConcreteType<TTo>()
         {
             this.Container.RegisterType<TFactory>(

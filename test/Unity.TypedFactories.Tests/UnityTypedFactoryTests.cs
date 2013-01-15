@@ -1,9 +1,8 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnityTypedFactoryTests.cs" company="Pedro Pombeiro">
+// <copyright file="UnityTypedFactoryTests.cs" company="Developer In The Flow">
 //   © 2012 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
-
 namespace Unity.TypedFactories.Tests
 // ReSharper disable InconsistentNaming
 {
@@ -119,10 +118,10 @@ namespace Unity.TypedFactories.Tests
 
                 // Act
                 var factory = unityContainer.Resolve<ITest4Factory>();
-                var test4 = factory.Create(typeof(Decimal));
+                var test4 = factory.Create(typeof(decimal));
 
                 // Assert
-                Assert.AreEqual(typeof(Decimal), test4.TypeParam);
+                Assert.AreEqual(typeof(decimal), test4.TypeParam);
             }
         }
 
@@ -225,16 +224,15 @@ namespace Unity.TypedFactories.Tests
                     .ForConcreteType<TestClass2>();
 
                 const string TestValue = "TestValue";
-                ISomeInstance someInstance = null;
 
                 unityContainer.RegisterType<ISomeService, SomeService>(new ContainerControlledLifetimeManager());
 
                 // Act
                 var factory = unityContainer.Resolve<ITest2Factory>();
-                var testClass2 = factory.Create(string.Empty, someInstance, TestValue);
+                var testClass2 = factory.Create(string.Empty, null, TestValue);
 
                 // Assert
-                Assert.AreSame(someInstance, testClass2.TestProperty2);
+                Assert.IsNull(testClass2.TestProperty2);
                 Assert.IsEmpty(testClass2.TestProperty1);
                 Assert.AreSame(TestValue, testClass2.TestProperty3);
             }
