@@ -3,7 +3,7 @@
     <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
       <AnalyzerSettings>
         <StringProperty Name="CompanyName">Developer In The Flow</StringProperty>
-        <StringProperty Name="Copyright">© 2012 Pedro Pombeiro</StringProperty>
+        <StringProperty Name="Copyright">© 2012-2013 Pedro Pombeiro</StringProperty>
       </AnalyzerSettings>
     </Analyzer>
   </Analyzers>

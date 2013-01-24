@@ -11,7 +11,7 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>This project provides functionality similar to Castle.Windsor Typed Factories, for the Unity IoC container.</description>
         <releaseNotes />
-        <copyright>Copyright © Pedro Pombeiro 2012</copyright>
+        <copyright>Copyright © Pedro Pombeiro 2012-2013</copyright>
         <tags>Unity IoC DI Typed Factories Fluent</tags>
     </metadata>
 </package>

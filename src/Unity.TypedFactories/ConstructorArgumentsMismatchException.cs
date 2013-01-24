@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConstructorArgumentsMismatchException.cs" company="Developer In The Flow">
-//   © 2012 Pedro Pombeiro
+//   © 2012-2013 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 namespace Unity.TypedFactories
