@@ -3,7 +3,7 @@
     <metadata>
         <id>Unity.TypedFactories</id>
         <version>$version$</version>
-        <title>Unity.TypedFactories</title>
+        <title>Unity Typed Factories</title>
         <authors>pombeirp</authors>
         <owners>Developer In The Flow</owners>
         <licenseUrl>https://github.com/PombeirP/Unity.TypedFactories/blob/master/LICENSE.md</licenseUrl>
@@ -12,6 +12,6 @@
         <description>This project provides functionality similar to Castle.Windsor Typed Factories, for the Unity IoC container.</description>
         <releaseNotes />
         <copyright>Copyright © Pedro Pombeiro 2012-2013</copyright>
-        <tags>Unity IoC DI Typed Factories Fluent</tags>
+        <tags>Unity IoC DI Automatic Typed Factories autofactories Fluent</tags>
     </metadata>
 </package>
