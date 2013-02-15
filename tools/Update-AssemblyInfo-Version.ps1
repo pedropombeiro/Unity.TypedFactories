@@ -1,6 +1,6 @@
 ﻿Param($AssemblyVersion, $AssemblyFileVersion, $AssemblyInformationalVersion) 
 
-$globalAssemblyInfoPath = [System.IO.Path]::GetFullPath(".\GlobalAssemblyInfo.cs")
+$globalAssemblyInfoPath = [System.IO.Path]::GetFullPath(".\AssemblyInfo.cs")
 
 (gc $globalAssemblyInfoPath) |
   ForEach-Object {
