@@ -1,0 +1,4 @@
+[General]
+ActiveBuildServerType = TeamCity
+[TeamCity]
+BuildServerUrl = teamcity.codebetter.com
