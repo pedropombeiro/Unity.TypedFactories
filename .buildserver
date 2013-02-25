@@ -2,3 +2,4 @@
 ActiveBuildServerType = TeamCity
 [TeamCity]
 BuildServerUrl = teamcity.codebetter.com
+ProjectName = Unity.TypedFactories
