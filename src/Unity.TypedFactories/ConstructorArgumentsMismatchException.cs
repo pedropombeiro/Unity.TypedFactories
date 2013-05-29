@@ -34,7 +34,10 @@ namespace Unity.TypedFactories
         /// <param name="innerException">
         /// The inner exception, documenting the resolution failure.
         /// </param>
-        public ConstructorArgumentsMismatchException(string message, Type typedFactoryType, ParameterInfo[] nonMatchingParameters, ResolutionFailedException innerException)
+        public ConstructorArgumentsMismatchException(string message, 
+                                                     Type typedFactoryType, 
+                                                     ParameterInfo[] nonMatchingParameters, 
+                                                     ResolutionFailedException innerException)
             : base(message, innerException)
         {
             this.TypedFactoryType = typedFactoryType;

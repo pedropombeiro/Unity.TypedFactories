@@ -54,7 +54,10 @@ namespace Unity.TypedFactories.Implementation
         /// </summary>
         protected static ProxyGenerator ProxyGenerator
         {
-            get { return proxyGenerator ?? (proxyGenerator = new ProxyGenerator()); }
+            get
+            {
+                return proxyGenerator ?? (proxyGenerator = new ProxyGenerator());
+            }
         }
 
         #endregion
