@@ -65,6 +65,7 @@
     <Compile Include="ConstructorArgumentsMismatchException.cs" />
     <Compile Include="Implementation\FactoryInterceptor.cs" />
     <Compile Include="Implementation\TypedFactoryRegistrationBase.cs" />
+    <Compile Include="ObjectConstructionException.cs" />
     <Compile Include="UnityTypedFactoryExtensions.cs" />
     <Compile Include="ITypedFactoryRegistration.cs" />
     <Compile Include="Implementation\TypedFactoryRegistration.cs" />

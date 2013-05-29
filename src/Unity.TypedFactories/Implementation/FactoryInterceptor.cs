@@ -77,9 +77,11 @@ namespace Unity.TypedFactories.Implementation
             }
             catch (ResolutionFailedException resolutionFailedException)
             {
-                // Check if the resolution failure was due to parameter name mismatches, and if so, report it to the user.
-                var invalidOperationException = resolutionFailedException.InnerException as InvalidOperationException;
-                if (invalidOperationException != null)
+                var innerException = resolutionFailedException.InnerException;
+                var invalidOperationException = innerException as InvalidOperationException;
+
+// Check if the resolution failure was due to parameter name mismatches, and if so, report it to the user.
+                if (invalidOperationException != null && innerException.Source == "Microsoft.Practices.Unity")
                 {
                     var factoryParameterNames = invocation.Method.GetParameters().Select(x => x.Name).ToArray();
                     var nonExistingParamsPerConstructorDictionary = new Dictionary<ConstructorInfo, ParameterInfo[]>();
@@ -114,6 +116,18 @@ namespace Unity.TypedFactories.Implementation
                             invocation.Method.ReflectedType, 
                             selectedConstructorKvp.Value, 
                             resolutionFailedException);
+                    }
+                }
+                else
+                {
+                    // If the constructor threw an exception, wrap it in a ObjectConstructionException
+                    if (innerException != null)
+                    {
+                        var message = string.Format(
+                            "Exception thrown by {0}'s constructor. Take a look at the InnerException for the actual exception thrown.", 
+                            resolutionFailedException.TypeRequested);
+
+                        throw new ObjectConstructionException(message, innerException);
                     }
                 }
 

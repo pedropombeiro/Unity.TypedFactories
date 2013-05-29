@@ -79,7 +79,9 @@ namespace Unity.TypedFactories.Tests
         {
             #region Public Methods and Operators
 
-            ITest2 Create(string testProperty1, ISomeInstance someInstance, string testProperty3);
+            ITest2 Create(string testProperty1, 
+                          ISomeInstance someInstance, 
+                          string testProperty3);
 
             #endregion
         }
@@ -105,6 +107,22 @@ namespace Unity.TypedFactories.Tests
         #endregion
 
         #region Public Methods and Operators
+
+        [Test]
+        public void given_instantiated_Sut_when_Create_is_called_and_ArgumentException_is_thrown_by_the_constructor_then_exception_is_wrapped_in_ObjectConstructionException()
+        {
+            // Arrange
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ISomeInstanceFactory>()
+                    .ForConcreteType<FaultyTestClass>();
+
+                // Act
+                var factory = unityContainer.Resolve<ISomeInstanceFactory>();
+                Assert.IsInstanceOf<InvalidOperationException>(Assert.Throws<ObjectConstructionException>(() => factory.Create()).InnerException);
+            }
+        }
 
         [Test]
         public void given_instantiated_Sut_when_Create_is_called_with_Type_parameter_then_Type_value_is_passed_correctly()
@@ -303,6 +321,19 @@ namespace Unity.TypedFactories.Tests
         }
 
         [UsedImplicitly]
+        private class FaultyTestClass : ISomeInstance
+        {
+            #region Constructors and Destructors
+
+            public FaultyTestClass()
+            {
+                throw new InvalidOperationException();
+            }
+
+            #endregion
+        }
+
+        [UsedImplicitly]
         private class SomeInstance : ISomeInstance
         {
         }
@@ -349,7 +380,10 @@ namespace Unity.TypedFactories.Tests
         {
             #region Constructors and Destructors
 
-            public TestClass2(ISomeInstance someInstance, string testProperty1, ISomeService someService, string testProperty3)
+            public TestClass2(ISomeInstance someInstance, 
+                              string testProperty1, 
+                              ISomeService someService, 
+                              string testProperty3)
             {
                 this.InjectedService = someService;
                 this.TestProperty1 = testProperty1;
@@ -377,7 +411,10 @@ namespace Unity.TypedFactories.Tests
         {
             #region Constructors and Destructors
 
-            public TestClass2NonMatchingName(ISomeInstance someInstance, string nonMatchingTestProperty1, ISomeService someService, string nonMatchingTestProperty3)
+            public TestClass2NonMatchingName(ISomeInstance someInstance, 
+                                             string nonMatchingTestProperty1, 
+                                             ISomeService someService, 
+                                             string nonMatchingTestProperty3)
             {
                 this.InjectedService = someService;
                 this.TestProperty1 = nonMatchingTestProperty1;
