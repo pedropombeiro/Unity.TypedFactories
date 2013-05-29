@@ -123,11 +123,7 @@ namespace Unity.TypedFactories.Implementation
                     // If the constructor threw an exception, wrap it in a ObjectConstructionException
                     if (innerException != null)
                     {
-                        var message = string.Format(
-                            "Exception thrown by {0}'s constructor. Take a look at the InnerException for the actual exception thrown.", 
-                            resolutionFailedException.TypeRequested);
-
-                        throw new ObjectConstructionException(message, innerException);
+                        throw innerException;
                     }
                 }
 

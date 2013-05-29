@@ -109,7 +109,8 @@ namespace Unity.TypedFactories.Tests
         #region Public Methods and Operators
 
         [Test]
-        public void given_instantiated_Sut_when_Create_is_called_and_ArgumentException_is_thrown_by_the_constructor_then_exception_is_wrapped_in_ObjectConstructionException()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void given_instantiated_Sut_when_Create_is_called_and_ArgumentException_is_thrown_by_the_constructor_then_exception_is_rethrown_unwrapped_from_ResolutionFailedException()
         {
             // Arrange
             using (var unityContainer = new UnityContainer())
@@ -120,7 +121,7 @@ namespace Unity.TypedFactories.Tests
 
                 // Act
                 var factory = unityContainer.Resolve<ISomeInstanceFactory>();
-                Assert.IsInstanceOf<InvalidOperationException>(Assert.Throws<ObjectConstructionException>(() => factory.Create()).InnerException);
+                factory.Create();
             }
         }
 
@@ -380,10 +381,11 @@ namespace Unity.TypedFactories.Tests
         {
             #region Constructors and Destructors
 
-            public TestClass2(ISomeInstance someInstance, 
-                              string testProperty1, 
-                              ISomeService someService, 
-                              string testProperty3)
+            public TestClass2(
+                ISomeInstance someInstance, 
+                string testProperty1, 
+                ISomeService someService, 
+                string testProperty3)
             {
                 this.InjectedService = someService;
                 this.TestProperty1 = testProperty1;
@@ -411,10 +413,11 @@ namespace Unity.TypedFactories.Tests
         {
             #region Constructors and Destructors
 
-            public TestClass2NonMatchingName(ISomeInstance someInstance, 
-                                             string nonMatchingTestProperty1, 
-                                             ISomeService someService, 
-                                             string nonMatchingTestProperty3)
+            public TestClass2NonMatchingName(
+                ISomeInstance someInstance, 
+                string nonMatchingTestProperty1, 
+                ISomeService someService, 
+                string nonMatchingTestProperty3)
             {
                 this.InjectedService = someService;
                 this.TestProperty1 = nonMatchingTestProperty1;
