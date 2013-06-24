@@ -44,7 +44,7 @@ namespace Unity.TypedFactories.Implementation
         /// </typeparam>
         public override void ForConcreteType<TTo>()
         {
-            var injectionFactory = new InjectionFactory(container => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new FactoryInterceptor<TTo>(container)));
+            var injectionFactory = new InjectionFactory(container => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new FactoryInterceptor<TTo>(container, this.Name)));
 
             if (this.Name != null)
             {

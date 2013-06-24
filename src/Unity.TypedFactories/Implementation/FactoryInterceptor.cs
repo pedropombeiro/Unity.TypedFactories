@@ -20,19 +20,32 @@ namespace Unity.TypedFactories.Implementation
     /// <typeparam name="TConcrete">The concrete class which will be constructed by the factory.</typeparam>
     public class FactoryInterceptor<TConcrete> : IInterceptor
     {
+        #region Fields
+
+        /// <summary>
+        /// Name that will be used to request the type.
+        /// </summary>
+        private readonly string name;
+
+        #endregion
+
         #region Constructors and Destructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FactoryInterceptor{TConcrete}"/> class.
         /// </summary>
         /// <param name="container">
-        /// The Unity container.
+        ///     The Unity container.
         /// </param>
+        /// <param name="name">Name that will be used to request the type.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when the injected <paramref name="container"/> is null.
         /// </exception>
-        public FactoryInterceptor(IUnityContainer container)
+        public FactoryInterceptor(
+            IUnityContainer container, 
+            string name)
         {
+            this.name = name;
             if (container == null)
             {
                 throw new ArgumentNullException("container");
@@ -71,9 +84,18 @@ namespace Unity.TypedFactories.Implementation
 
             try
             {
-                invocation.ReturnValue = invocation.Arguments.Any()
-                                             ? this.Container.Resolve(typeof(TConcrete), GetResolverOverridesFor(invocation).ToArray())
-                                             : this.Container.Resolve(typeof(TConcrete));
+                if (this.name == null)
+                {
+                    invocation.ReturnValue = invocation.Arguments.Any()
+                                                 ? this.Container.Resolve(typeof(TConcrete), GetResolverOverridesFor(invocation).ToArray())
+                                                 : this.Container.Resolve(typeof(TConcrete));
+                }
+                else
+                {
+                    invocation.ReturnValue = invocation.Arguments.Any()
+                                                 ? this.Container.Resolve(typeof(TConcrete), this.name, GetResolverOverridesFor(invocation).ToArray())
+                                                 : this.Container.Resolve(typeof(TConcrete), this.name);
+                }
             }
             catch (ResolutionFailedException resolutionFailedException)
             {
