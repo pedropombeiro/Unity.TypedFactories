@@ -35,6 +35,29 @@ namespace Unity.TypedFactories
             return typedFactoryRegistration;
         }
 
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <typeparam name="TFactory">
+        /// The factory interface.
+        /// </typeparam>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <param name="name">
+        /// Name that will be used to request the type.
+        /// </param>
+        /// <returns>
+        /// The holder object which facilitates the fluent interface.
+        /// </returns>
+        public static ITypedFactoryRegistration RegisterTypedFactory<TFactory>(this IUnityContainer container, 
+                                                                               string name)
+            where TFactory : class
+        {
+            var typedFactoryRegistration = new TypedFactoryRegistration<TFactory>(container, name);
+            return typedFactoryRegistration;
+        }
+
         #endregion
     }
 }

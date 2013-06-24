@@ -22,10 +22,13 @@ namespace Unity.TypedFactories.Implementation
         /// Initializes a new instance of the <see cref="TypedFactoryRegistration{TFactory}"/> class.
         /// </summary>
         /// <param name="container">
-        /// The target Unity container on which to perform the registrations.
+        ///     The target Unity container on which to perform the registrations.
         /// </param>
-        public TypedFactoryRegistration(IUnityContainer container)
-            : base(container)
+        /// <param name="name">Name that will be used to request the type.</param>
+        public TypedFactoryRegistration(
+            IUnityContainer container, 
+            string name = null)
+            : base(container, name)
         {
         }
 
@@ -41,9 +44,16 @@ namespace Unity.TypedFactories.Implementation
         /// </typeparam>
         public override void ForConcreteType<TTo>()
         {
-            this.Container.RegisterType<TFactory>(
-                new InjectionFactory(
-                    container => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new FactoryInterceptor<TTo>(container))));
+            var injectionFactory = new InjectionFactory(container => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new FactoryInterceptor<TTo>(container)));
+
+            if (this.Name != null)
+            {
+                this.Container.RegisterType<TFactory>(this.Name, injectionFactory);
+            }
+            else
+            {
+                this.Container.RegisterType<TFactory>(injectionFactory);
+            }
         }
 
         #endregion

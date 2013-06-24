@@ -29,11 +29,14 @@ namespace Unity.TypedFactories.Implementation
         /// Initializes a new instance of the <see cref="TypedFactoryRegistrationBase"/> class.
         /// </summary>
         /// <param name="container">
-        /// The target Unity container on which to perform the registrations.
+        ///     The target Unity container on which to perform the registrations.
         /// </param>
-        protected TypedFactoryRegistrationBase(IUnityContainer container)
+        /// <param name="name">Name that will be used to request the type.</param>
+        protected TypedFactoryRegistrationBase(IUnityContainer container, 
+                                               string name)
         {
             this.Container = container;
+            this.Name = name;
         }
 
         #endregion
@@ -44,6 +47,11 @@ namespace Unity.TypedFactories.Implementation
         /// Gets the target Unity container on which to perform the registrations.
         /// </summary>
         public IUnityContainer Container { get; private set; }
+
+        /// <summary>
+        /// Gets the name that will be used to request the type.
+        /// </summary>
+        public string Name { get; private set; }
 
         #endregion
 
