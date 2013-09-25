@@ -76,25 +76,38 @@ namespace Unity.TypedFactories.Implementation
             }
 
             var returnType = invocation.Method.ReturnType;
+            var collectionType = typeof(IEnumerable<>).MakeGenericType(typeof(TConcrete));
+            var isCollection = collectionType.IsAssignableFrom(returnType);
 
-            if (!returnType.IsAssignableFrom(typeof(TConcrete)))
+            if (!returnType.IsAssignableFrom(typeof(TConcrete)) && !isCollection)
             {
-                throw new InvalidCastException(string.Format("The concrete type {0} does not implement the factory method return type {1}", typeof(TConcrete).FullName, returnType.FullName));
+                throw new InvalidCastException(string.Format("{2}: The concrete type {0} does not implement the factory method return type {1}", typeof(TConcrete).FullName, returnType.FullName, invocation));
             }
 
             try
             {
-                if (this.name == null)
+                if (isCollection)
                 {
-                    invocation.ReturnValue = invocation.Arguments.Any()
-                                                 ? this.Container.Resolve(typeof(TConcrete), GetResolverOverridesFor(invocation).ToArray())
-                                                 : this.Container.Resolve(typeof(TConcrete));
+                    invocation.ReturnValue =
+                        (invocation.Arguments.Any()
+                             ? this.Container.ResolveAll<TConcrete>(GetResolverOverridesFor(invocation).ToArray())
+                             : this.Container.ResolveAll<TConcrete>())
+                            .ToArray();
                 }
                 else
                 {
-                    invocation.ReturnValue = invocation.Arguments.Any()
-                                                 ? this.Container.Resolve(typeof(TConcrete), this.name, GetResolverOverridesFor(invocation).ToArray())
-                                                 : this.Container.Resolve(typeof(TConcrete), this.name);
+                    if (this.name == null)
+                    {
+                        invocation.ReturnValue = invocation.Arguments.Any()
+                                                     ? this.Container.Resolve(typeof(TConcrete), GetResolverOverridesFor(invocation).ToArray())
+                                                     : this.Container.Resolve(typeof(TConcrete));
+                    }
+                    else
+                    {
+                        invocation.ReturnValue = invocation.Arguments.Any()
+                                                     ? this.Container.Resolve(typeof(TConcrete), this.name, GetResolverOverridesFor(invocation).ToArray())
+                                                     : this.Container.Resolve(typeof(TConcrete), this.name);
+                    }
                 }
             }
             catch (ResolutionFailedException resolutionFailedException)

@@ -7,6 +7,8 @@ namespace Unity.TypedFactories.Tests
 // ReSharper disable InconsistentNaming
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     using JetBrains.Annotations;
 
@@ -18,6 +20,17 @@ namespace Unity.TypedFactories.Tests
     public class UnityTypedFactoryTests
     {
         #region Interfaces
+
+        public interface ICollectionTestFactory
+        {
+            #region Public Methods and Operators
+
+            IList<ITest1> All(string textParam);
+
+            ITest1 Create(string textParam);
+
+            #endregion
+        }
 
         public interface ISomeInstance
         {
@@ -79,9 +92,10 @@ namespace Unity.TypedFactories.Tests
         {
             #region Public Methods and Operators
 
-            ITest2 Create(string testProperty1, 
-                          ISomeInstance someInstance, 
-                          string testProperty3);
+            ITest2 Create(
+                string testProperty1, 
+                ISomeInstance someInstance, 
+                string testProperty3);
 
             #endregion
         }
@@ -107,6 +121,30 @@ namespace Unity.TypedFactories.Tests
         #endregion
 
         #region Public Methods and Operators
+
+        [Test]
+        public void given_factory_with_collection_ensure_collection_returns_correctly()
+        {
+            // Arrange
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ICollectionTestFactory>()
+                    .ForConcreteType<ITest1>();
+
+                const string TestValue = "TestValue";
+
+                unityContainer.RegisterType<ITest1, TestClass1>("Test");
+
+                // Act
+                var factory = unityContainer.Resolve<ICollectionTestFactory>();
+                var results = factory.All(TestValue);
+
+                // Assert
+                Assert.AreEqual(1, results.Count);
+                Assert.AreEqual(TestValue, results.Select(x => x.TestProperty1).Distinct().Single());
+            }
+        }
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
