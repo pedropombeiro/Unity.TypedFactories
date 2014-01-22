@@ -61,7 +61,13 @@ namespace Unity.TypedFactories
         public static ITypedFactoryRegistration RegisterTypedFactory<TFactory>(this IUnityContainer container)
             where TFactory : class
         {
-            return container.RegisterTypedFactory(typeof(TFactory));
+            if (!typeof(TFactory).IsInterface)
+            {
+                throw new ArgumentException("The factory contract does not represent an interface!");
+            }
+
+            var typedFactoryRegistration = new TypedFactoryRegistration<TFactory>(container);
+            return typedFactoryRegistration;
         }
 
         /// <summary>

@@ -70,7 +70,7 @@ namespace Unity.TypedFactories.Implementation
         /// <summary>
         /// Gets or sets the injected <see cref="IUnityContainer"/> instance which will be used to resolve the <see cref="concreteType"/> type.
         /// </summary>
-        private IUnityContainer Container { get; set; }
+        protected IUnityContainer Container { get; private set; }
 
         #endregion
 
@@ -97,26 +97,11 @@ namespace Unity.TypedFactories.Implementation
             {
                 if (isCollection)
                 {
-                    invocation.ReturnValue =
-                        (invocation.Arguments.Any()
-                             ? this.Container.ResolveAll(this.concreteType, GetResolverOverridesFor(invocation).ToArray())
-                             : this.Container.ResolveAll(this.concreteType))
-                            .ToArray();
+                    this.ResolveArray(invocation);
                 }
                 else
                 {
-                    if (this.name == null)
-                    {
-                        invocation.ReturnValue = invocation.Arguments.Any()
-                                                     ? this.Container.Resolve(this.concreteType, GetResolverOverridesFor(invocation).ToArray())
-                                                     : this.Container.Resolve(this.concreteType);
-                    }
-                    else
-                    {
-                        invocation.ReturnValue = invocation.Arguments.Any()
-                                                     ? this.Container.Resolve(this.concreteType, this.name, GetResolverOverridesFor(invocation).ToArray())
-                                                     : this.Container.Resolve(this.concreteType, this.name);
-                    }
+                    this.ResolveObject(invocation);
                 }
             }
             catch (ResolutionFailedException resolutionFailedException)
@@ -149,8 +134,7 @@ namespace Unity.TypedFactories.Implementation
                                                       orderby kvp.Value.Length
                                                       select kvp).FirstOrDefault();
 
-                        var message = string.Format(
-                                                    "Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.",
+                        var message = string.Format("Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.",
                                                     invocation.Method.ReflectedType.Name,
                                                     resolutionFailedException.TypeRequested,
                                                     string.Join(", ", selectedConstructorKvp.Value.Select(paramInfo => paramInfo.Name)));
@@ -188,7 +172,7 @@ namespace Unity.TypedFactories.Implementation
         /// <returns>
         /// The collection of <see cref="ParameterOverride"/>s.
         /// </returns>
-        private static IEnumerable<ResolverOverride> GetResolverOverridesFor(IInvocation invocation)
+        protected static IEnumerable<ResolverOverride> GetResolverOverridesFor(IInvocation invocation)
         {
             var arguments = invocation.Arguments;
             var parameterInfos = invocation.Method.GetParameters();
@@ -199,6 +183,39 @@ namespace Unity.TypedFactories.Implementation
                 var parameterValue = arguments[parameterIndex];
 
                 yield return new ParameterOverride(parameterInfo.Name, new InjectionParameter(parameterInfo.ParameterType, parameterValue));
+            }
+        }
+
+        /// <summary>
+        /// Resolve an array of objects based on the context described in <paramref name="invocation"/>.
+        /// </summary>
+        /// <param name="invocation">The invocation context.</param>
+        protected virtual void ResolveArray(IInvocation invocation)
+        {
+            invocation.ReturnValue =
+                (invocation.Arguments.Any()
+                     ? this.Container.ResolveAll(this.concreteType, GetResolverOverridesFor(invocation).ToArray())
+                     : this.Container.ResolveAll(this.concreteType))
+                    .ToArray();
+        }
+
+        /// <summary>
+        /// Resolve an object based on the context described in <paramref name="invocation"/>.
+        /// </summary>
+        /// <param name="invocation">The invocation context.</param>
+        protected virtual void ResolveObject(IInvocation invocation)
+        {
+            if (this.name == null)
+            {
+                invocation.ReturnValue = invocation.Arguments.Any()
+                                             ? this.Container.Resolve(this.concreteType, GetResolverOverridesFor(invocation).ToArray())
+                                             : this.Container.Resolve(this.concreteType);
+            }
+            else
+            {
+                invocation.ReturnValue = invocation.Arguments.Any()
+                                             ? this.Container.Resolve(this.concreteType, this.name, GetResolverOverridesFor(invocation).ToArray())
+                                             : this.Container.Resolve(this.concreteType, this.name);
             }
         }
 

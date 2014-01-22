@@ -64,7 +64,7 @@
   <ItemGroup>
     <Compile Include="ConstructorArgumentsMismatchException.cs" />
     <Compile Include="Implementation\FactoryInterceptor.cs" />
-    <Compile Include="TypedFactoryRegistrationExtensions.cs" />
+    <Compile Include="Implementation\GenericFactoryInterceptor.cs" />
     <Compile Include="UnityTypedFactoryExtensions.cs" />
     <Compile Include="ITypedFactoryRegistration.cs" />
     <Compile Include="Implementation\TypedFactoryRegistration.cs" />

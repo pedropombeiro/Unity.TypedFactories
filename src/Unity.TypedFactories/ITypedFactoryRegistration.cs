@@ -38,6 +38,14 @@ namespace Unity.TypedFactories
         [PublicAPI]
         void ForConcreteType(Type toType);
 
+        /// <summary>
+        /// Defines the concrete type which the factory will create.
+        /// </summary>
+        /// <typeparam name="TTo">
+        /// The concrete type which the factory will instantiate.
+        /// </typeparam>
+        void ForConcreteType<TTo>();
+
         #endregion
     }
 }
