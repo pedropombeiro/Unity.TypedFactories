@@ -1,8 +1,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FactoryInterceptor.cs" company="Developer In The Flow">
-//   © 2012-2013 Pedro Pombeiro
+//   © 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Unity.TypedFactories.Implementation
 {
     using System;
@@ -15,12 +16,16 @@ namespace Unity.TypedFactories.Implementation
     using Microsoft.Practices.Unity;
 
     /// <summary>
-    /// Defines an <see cref="IInterceptor"/> implementation which implements the factory methods, by passing the method arguments by name into <see cref="TConcrete"/>'s constructor.
+    /// Defines an <see cref="IInterceptor"/> implementation which implements the factory methods, by passing the method arguments by name into a specified concrete type's constructor.
     /// </summary>
-    /// <typeparam name="TConcrete">The concrete class which will be constructed by the factory.</typeparam>
-    public class FactoryInterceptor<TConcrete> : IInterceptor
+    public class FactoryInterceptor : IInterceptor
     {
         #region Fields
+
+        /// <summary>
+        /// The concrete class which will be constructed by the factory.
+        /// </summary>
+        private readonly Type concreteType;
 
         /// <summary>
         /// Name that will be used to request the type.
@@ -32,19 +37,23 @@ namespace Unity.TypedFactories.Implementation
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FactoryInterceptor{TConcrete}"/> class.
+        ///     Initializes a new instance of the <see cref="FactoryInterceptor"/> class.
         /// </summary>
         /// <param name="container">
         ///     The Unity container.
         /// </param>
+        /// <param name="concreteType">
+        ///     The concrete class which will be constructed by the factory.
+        /// </param>
         /// <param name="name">Name that will be used to request the type.</param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when the injected <paramref name="container"/> is null.
+        ///     Thrown when the injected <paramref name="container"/> is null.
         /// </exception>
-        public FactoryInterceptor(
-            IUnityContainer container, 
-            string name)
+        public FactoryInterceptor(IUnityContainer container,
+                                  Type concreteType,
+                                  string name)
         {
+            this.concreteType = concreteType;
             this.name = name;
             if (container == null)
             {
@@ -59,7 +68,7 @@ namespace Unity.TypedFactories.Implementation
         #region Properties
 
         /// <summary>
-        /// Gets or sets the injected <see cref="IUnityContainer"/> instance which will be used to resolve the <see cref="TConcrete"/> type.
+        /// Gets or sets the injected <see cref="IUnityContainer"/> instance which will be used to resolve the <see cref="concreteType"/> type.
         /// </summary>
         private IUnityContainer Container { get; set; }
 
@@ -76,12 +85,12 @@ namespace Unity.TypedFactories.Implementation
             }
 
             var returnType = invocation.Method.ReturnType;
-            var collectionType = typeof(IEnumerable<>).MakeGenericType(typeof(TConcrete));
+            var collectionType = typeof(IEnumerable<>).MakeGenericType(this.concreteType);
             var isCollection = collectionType.IsAssignableFrom(returnType);
 
-            if (!returnType.IsAssignableFrom(typeof(TConcrete)) && !isCollection)
+            if (!returnType.IsAssignableFrom(this.concreteType) && !isCollection)
             {
-                throw new InvalidCastException(string.Format("{2}: The concrete type {0} does not implement the factory method return type {1}", typeof(TConcrete).FullName, returnType.FullName, invocation));
+                throw new InvalidCastException(string.Format("{2}: The concrete type {0} does not implement the factory method return type {1}", this.concreteType.FullName, returnType.FullName, invocation));
             }
 
             try
@@ -90,8 +99,8 @@ namespace Unity.TypedFactories.Implementation
                 {
                     invocation.ReturnValue =
                         (invocation.Arguments.Any()
-                             ? this.Container.ResolveAll<TConcrete>(GetResolverOverridesFor(invocation).ToArray())
-                             : this.Container.ResolveAll<TConcrete>())
+                             ? this.Container.ResolveAll(this.concreteType, GetResolverOverridesFor(invocation).ToArray())
+                             : this.Container.ResolveAll(this.concreteType))
                             .ToArray();
                 }
                 else
@@ -99,14 +108,14 @@ namespace Unity.TypedFactories.Implementation
                     if (this.name == null)
                     {
                         invocation.ReturnValue = invocation.Arguments.Any()
-                                                     ? this.Container.Resolve(typeof(TConcrete), GetResolverOverridesFor(invocation).ToArray())
-                                                     : this.Container.Resolve(typeof(TConcrete));
+                                                     ? this.Container.Resolve(this.concreteType, GetResolverOverridesFor(invocation).ToArray())
+                                                     : this.Container.Resolve(this.concreteType);
                     }
                     else
                     {
                         invocation.ReturnValue = invocation.Arguments.Any()
-                                                     ? this.Container.Resolve(typeof(TConcrete), this.name, GetResolverOverridesFor(invocation).ToArray())
-                                                     : this.Container.Resolve(typeof(TConcrete), this.name);
+                                                     ? this.Container.Resolve(this.concreteType, this.name, GetResolverOverridesFor(invocation).ToArray())
+                                                     : this.Container.Resolve(this.concreteType, this.name);
                     }
                 }
             }
@@ -121,7 +130,7 @@ namespace Unity.TypedFactories.Implementation
                     var factoryParameterNames = invocation.Method.GetParameters().Select(x => x.Name).ToArray();
                     var nonExistingParamsPerConstructorDictionary = new Dictionary<ConstructorInfo, ParameterInfo[]>();
 
-                    foreach (var constructorInfo in typeof(TConcrete).GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
+                    foreach (var constructorInfo in this.concreteType.GetConstructors(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public))
                     {
                         var realConstructorNames = constructorInfo.GetParameters().Select(x => x.Name);
 
@@ -141,15 +150,15 @@ namespace Unity.TypedFactories.Implementation
                                                       select kvp).FirstOrDefault();
 
                         var message = string.Format(
-                            "Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.", 
-                            invocation.Method.ReflectedType.Name, 
-                            resolutionFailedException.TypeRequested, 
-                            string.Join(", ", selectedConstructorKvp.Value.Select(paramInfo => paramInfo.Name)));
+                                                    "Resolution failed.\nThere is a mismatch in parameter names between the typed factory interface {0} and {1}'s constructor.\nThe following parameter(s) seem to be missing in the constructor: {2}.",
+                                                    invocation.Method.ReflectedType.Name,
+                                                    resolutionFailedException.TypeRequested,
+                                                    string.Join(", ", selectedConstructorKvp.Value.Select(paramInfo => paramInfo.Name)));
 
                         throw new ConstructorArgumentsMismatchException(
-                            message, 
-                            invocation.Method.ReflectedType, 
-                            selectedConstructorKvp.Value, 
+                            message,
+                            invocation.Method.ReflectedType,
+                            selectedConstructorKvp.Value,
                             resolutionFailedException);
                     }
                 }

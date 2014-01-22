@@ -1,10 +1,13 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="UnityTypedFactoryExtensions.cs" company="Developer In The Flow">
-//   © 2012-2013 Pedro Pombeiro
+//   © 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Unity.TypedFactories
 {
+    using System;
+
     using Microsoft.Practices.Unity;
 
     using Unity.TypedFactories.Implementation;
@@ -15,6 +18,33 @@ namespace Unity.TypedFactories
     public static class UnityTypedFactoryExtensions
     {
         #region Public Methods and Operators
+
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <param name="factoryContractType">
+        /// The factory interface.
+        /// </param>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <returns>
+        /// The holder object which facilitates the fluent interface.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the <paramref name="factoryContractType"/> does not represent an interface type.
+        /// </exception>
+        public static ITypedFactoryRegistration RegisterTypedFactory(this IUnityContainer container,
+                                                                     Type factoryContractType)
+        {
+            if (!factoryContractType.IsInterface)
+            {
+                throw new ArgumentException("The factory contract does not represent an interface!", "factoryContractType");
+            }
+
+            var typedFactoryRegistration = new TypedFactoryRegistration(container, factoryContractType);
+            return typedFactoryRegistration;
+        }
 
         /// <summary>
         /// Registers a typed factory.
@@ -31,8 +61,7 @@ namespace Unity.TypedFactories
         public static ITypedFactoryRegistration RegisterTypedFactory<TFactory>(this IUnityContainer container)
             where TFactory : class
         {
-            var typedFactoryRegistration = new TypedFactoryRegistration<TFactory>(container);
-            return typedFactoryRegistration;
+            return container.RegisterTypedFactory(typeof(TFactory));
         }
 
         /// <summary>
@@ -50,11 +79,33 @@ namespace Unity.TypedFactories
         /// <returns>
         /// The holder object which facilitates the fluent interface.
         /// </returns>
-        public static ITypedFactoryRegistration RegisterTypedFactory<TFactory>(this IUnityContainer container, 
+        public static ITypedFactoryRegistration RegisterTypedFactory<TFactory>(this IUnityContainer container,
                                                                                string name)
             where TFactory : class
         {
-            var typedFactoryRegistration = new TypedFactoryRegistration<TFactory>(container, name);
+            return container.RegisterTypedFactory(typeof(TFactory), name);
+        }
+
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <param name="factoryContractType">
+        /// The factory interface.
+        /// </param>
+        /// <param name="name">
+        /// Name that will be used to request the type.
+        /// </param>
+        /// <returns>
+        /// The holder object which facilitates the fluent interface.
+        /// </returns>
+        public static ITypedFactoryRegistration RegisterTypedFactory(this IUnityContainer container,
+                                                                     Type factoryContractType,
+                                                                     string name)
+        {
+            var typedFactoryRegistration = new TypedFactoryRegistration(container, factoryContractType, name);
             return typedFactoryRegistration;
         }
 

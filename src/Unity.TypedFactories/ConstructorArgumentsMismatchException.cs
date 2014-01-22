@@ -1,8 +1,9 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConstructorArgumentsMismatchException.cs" company="Developer In The Flow">
-//   © 2012-2013 Pedro Pombeiro
+//   © 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Unity.TypedFactories
 {
     using System;
@@ -34,9 +35,9 @@ namespace Unity.TypedFactories
         /// <param name="innerException">
         /// The inner exception, documenting the resolution failure.
         /// </param>
-        public ConstructorArgumentsMismatchException(string message, 
-                                                     Type typedFactoryType, 
-                                                     ParameterInfo[] nonMatchingParameters, 
+        public ConstructorArgumentsMismatchException(string message,
+                                                     Type typedFactoryType,
+                                                     ParameterInfo[] nonMatchingParameters,
                                                      ResolutionFailedException innerException)
             : base(message, innerException)
         {

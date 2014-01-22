@@ -1,8 +1,9 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="UnityTypedFactoryTests.cs" company="Developer In The Flow">
-//   © 2012-2013 Pedro Pombeiro
+//   © 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
+
 namespace Unity.TypedFactories.Tests
 // ReSharper disable InconsistentNaming
 {
@@ -93,8 +94,8 @@ namespace Unity.TypedFactories.Tests
             #region Public Methods and Operators
 
             ITest2 Create(
-                string testProperty1, 
-                ISomeInstance someInstance, 
+                string testProperty1,
+                ISomeInstance someInstance,
                 string testProperty3);
 
             #endregion
@@ -420,9 +421,9 @@ namespace Unity.TypedFactories.Tests
             #region Constructors and Destructors
 
             public TestClass2(
-                ISomeInstance someInstance, 
-                string testProperty1, 
-                ISomeService someService, 
+                ISomeInstance someInstance,
+                string testProperty1,
+                ISomeService someService,
                 string testProperty3)
             {
                 this.InjectedService = someService;
@@ -452,9 +453,9 @@ namespace Unity.TypedFactories.Tests
             #region Constructors and Destructors
 
             public TestClass2NonMatchingName(
-                ISomeInstance someInstance, 
-                string nonMatchingTestProperty1, 
-                ISomeService someService, 
+                ISomeInstance someInstance,
+                string nonMatchingTestProperty1,
+                ISomeService someService,
                 string nonMatchingTestProperty3)
             {
                 this.InjectedService = someService;
