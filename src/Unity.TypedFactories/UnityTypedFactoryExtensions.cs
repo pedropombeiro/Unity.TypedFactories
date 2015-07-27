@@ -115,6 +115,102 @@ namespace Unity.TypedFactories
             return typedFactoryRegistration;
         }
 
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <param name="factoryContractType">
+        /// The factory interface.
+        /// </param>
+        /// <param name="toType">
+        /// The concrete type that the factory will instantiate.
+        /// </param>
+        /// <returns>
+        /// The Unity container to continue its fluent interface.
+        /// </returns>
+        public static IUnityContainer RegisterTypedFactory(this IUnityContainer container,
+                                                                     Type factoryContractType,
+                                                                     Type toType)
+        {
+            container.RegisterTypedFactory(factoryContractType).ForConcreteType(toType);
+            return container;
+        }
+
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <typeparam name="TFactory">
+        /// The factory interface.
+        /// </typeparam>
+        /// <typeparam name="TConcreteType">
+        /// The concrete type that the factory will instantiate.
+        /// </typeparam>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <returns>
+        /// The Unity container to continue its fluent interface.
+        /// </returns>
+        public static IUnityContainer RegisterTypedFactory<TFactory, TConcreteType>(this IUnityContainer container)
+            where TFactory : class
+        {
+            return container.RegisterTypedFactory(typeof(TFactory), typeof(TConcreteType));
+        }
+
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <param name="factoryContractType">
+        /// The factory interface.
+        /// </param>
+        /// <param name="toType">
+        /// The concrete type that the factory will instantiate.
+        /// </param>
+        /// <param name="name">
+        /// Name that will be used to request the type.
+        /// </param>
+        /// <returns>
+        /// The Unity container to continue its fluent interface.
+        /// </returns>
+        public static IUnityContainer RegisterTypedFactory(this IUnityContainer container,
+                                                                     Type factoryContractType,
+                                                                     Type toType,
+                                                                     string name)
+        {
+            container.RegisterTypedFactory(factoryContractType, name).ForConcreteType(toType);
+            return container;
+        }
+
+        /// <summary>
+        /// Registers a typed factory.
+        /// </summary>
+        /// <typeparam name="TFactory">
+        /// The factory interface.
+        /// </typeparam>
+        /// <typeparam name="TConcreteType">
+        /// The concrete type that the factory will instantiate.
+        /// </typeparam>
+        /// <param name="container">
+        /// The Unity container.
+        /// </param>
+        /// <param name="name">
+        /// Name that will be used to request the type.
+        /// </param>
+        /// <returns>
+        /// The Unity container to continue its fluent interface.
+        /// </returns>
+        public static IUnityContainer RegisterTypedFactory<TFactory, TConcreteType>(this IUnityContainer container,
+                                                                              string name)
+            where TFactory : class
+        {
+            return container.RegisterTypedFactory(typeof(TFactory), typeof(TConcreteType), name);
+        }
+
         #endregion
     }
 }
