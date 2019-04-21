@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="FactoryInterceptor.cs" company="Developer In The Flow">
-//   © 2012-2014 Pedro Pombeiro
+//   ï¿½ 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,9 @@ namespace Unity.TypedFactories.Implementation
 
     using Castle.DynamicProxy;
 
-    using Microsoft.Practices.Unity;
+    using Unity;
+    using Unity.Injection;
+    using Unity.Resolution;
 
     /// <summary>
     /// Defines an <see cref="IInterceptor"/> implementation which implements the factory methods, by passing the method arguments by name into a specified concrete type's constructor.
@@ -109,8 +111,8 @@ namespace Unity.TypedFactories.Implementation
                 var innerException = resolutionFailedException.InnerException;
                 var invalidOperationException = innerException as InvalidOperationException;
 
-// Check if the resolution failure was due to parameter name mismatches, and if so, report it to the user.
-                if (invalidOperationException != null && innerException.Source == "Microsoft.Practices.Unity")
+                // Check if the resolution failure was due to parameter name mismatches, and if so, report it to the user.
+                if (invalidOperationException != null && innerException.Source == "Unity")
                 {
                     var factoryParameterNames = invocation.Method.GetParameters().Select(x => x.Name).ToArray();
                     var nonExistingParamsPerConstructorDictionary = new Dictionary<ConstructorInfo, ParameterInfo[]>();

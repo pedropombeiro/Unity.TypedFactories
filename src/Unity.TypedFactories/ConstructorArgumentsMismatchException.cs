@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ConstructorArgumentsMismatchException.cs" company="Developer In The Flow">
-//   © 2012-2014 Pedro Pombeiro
+//   ï¿½ 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ namespace Unity.TypedFactories
 
     using JetBrains.Annotations;
 
-    using Microsoft.Practices.Unity;
+    using Unity;
 
     /// <summary>
     /// Exception thrown when the arguments supplied in a typed factory method do not fulfill the arguments required by a concrete class' constructors.

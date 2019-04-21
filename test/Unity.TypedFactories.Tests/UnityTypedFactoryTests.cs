@@ -13,7 +13,9 @@ namespace Unity.TypedFactories.Tests
 
     using JetBrains.Annotations;
 
-    using Microsoft.Practices.Unity;
+    using Unity;
+    using Unity.Exceptions;
+    using Unity.Lifetime;
 
     using NUnit.Framework;
 
@@ -148,7 +150,6 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void given_instantiated_Sut_when_Create_is_called_and_ArgumentException_is_thrown_by_the_constructor_then_exception_is_rethrown_unwrapped_from_ResolutionFailedException()
         {
             // Arrange
@@ -160,7 +161,8 @@ namespace Unity.TypedFactories.Tests
 
                 // Act
                 var factory = unityContainer.Resolve<ISomeInstanceFactory>();
-                factory.Create();
+                
+                Assert.Throws<System.Reflection.TargetInvocationException>(() => factory.Create());
             }
         }
 
@@ -184,7 +186,7 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ResolutionFailedException))]
+        //[ExpectedException(typeof(ResolutionFailedException))]
         public void given_instantiated_Sut_when_Create_is_called_with_one_of_the_parameters_not_resolvable_then_ResolutionFailedException_is_thrown()
         {
             // Arrange
@@ -198,12 +200,7 @@ namespace Unity.TypedFactories.Tests
 
                 // Act
                 var factory = unityContainer.Resolve<ITest2Factory>();
-                var testClass2 = factory.Create(null, someInstance, string.Empty);
-
-                // Assert
-                Assert.AreSame(someInstance, testClass2.TestProperty2);
-                Assert.IsNull(testClass2.TestProperty1);
-                Assert.AreSame(string.Empty, testClass2.TestProperty3);
+                Assert.Throws<System.InvalidOperationException>(() => factory.Create(null, someInstance, string.Empty));
             }
         }
 
@@ -228,7 +225,7 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ConstructorArgumentsMismatchException))]
+        //[ExpectedException(typeof(ConstructorArgumentsMismatchException))]
         public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_with_non_matching_parameter_name_then_ConstructorArgumentsMismatchException_is_thrown()
         {
             // Arrange
@@ -243,7 +240,7 @@ namespace Unity.TypedFactories.Tests
 
             // Act
             var factory = unityContainer.Resolve<ITest2Factory>();
-            factory.Create(TestValue, someInstance, string.Empty);
+            Assert.Throws<System.InvalidOperationException>(() => factory.Create(TestValue, someInstance, string.Empty));
         }
 
         [Test]
