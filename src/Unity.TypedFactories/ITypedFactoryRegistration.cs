@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ITypedFactoryRegistration.cs" company="Developer In The Flow">
-//   © 2012-2014 Pedro Pombeiro
+//   ï¿½ 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ namespace Unity.TypedFactories
 
     using JetBrains.Annotations;
 
-    using Microsoft.Practices.Unity;
+    using Unity;
 
     /// <summary>
     /// Defines the contract for the fluent interface for registering typed factories.

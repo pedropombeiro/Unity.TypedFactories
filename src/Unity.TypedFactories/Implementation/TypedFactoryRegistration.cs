@@ -1,6 +1,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="TypedFactoryRegistration.cs" company="Developer In The Flow">
-//   © 2012-2014 Pedro Pombeiro
+//   ï¿½ 2012-2014 Pedro Pombeiro
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
@@ -10,7 +10,8 @@ namespace Unity.TypedFactories.Implementation
 
     using Castle.DynamicProxy;
 
-    using Microsoft.Practices.Unity;
+    using Unity;
+    using Unity.Injection;
 
     internal class TypedFactoryRegistration<TFactory> : TypedFactoryRegistration
         where TFactory : class
@@ -44,15 +45,14 @@ namespace Unity.TypedFactories.Implementation
         /// </typeparam>
         public override void ForConcreteType<TTo>()
         {
-            var injectionFactory = new InjectionFactory(container => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new GenericFactoryInterceptor<TTo>(container, this.Name)));
 
             if (this.Name != null)
             {
-                this.Container.RegisterType<TFactory>(this.Name, injectionFactory);
+                this.Container.RegisterFactory<TFactory>(this.Name, (container) => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new GenericFactoryInterceptor<TTo>(container, this.Name)));
             }
             else
             {
-                this.Container.RegisterType<TFactory>(injectionFactory);
+                this.Container.RegisterFactory<TFactory>((container) => ProxyGenerator.CreateInterfaceProxyWithoutTarget<TFactory>(new GenericFactoryInterceptor<TTo>(container, this.Name)));
             }
         }
 
@@ -147,15 +147,13 @@ namespace Unity.TypedFactories.Implementation
         /// </param>
         public void ForConcreteType(Type toType)
         {
-            var injectionFactory = new InjectionFactory(container => ProxyGenerator.CreateInterfaceProxyWithoutTarget(this.factoryContractType, new FactoryInterceptor(container, toType, this.Name)));
-
             if (this.Name != null)
             {
-                this.Container.RegisterType(null, this.factoryContractType, this.Name, injectionFactory);
+                this.Container.RegisterFactory(this.factoryContractType, this.Name, (container) => ProxyGenerator.CreateInterfaceProxyWithoutTarget(this.factoryContractType, new FactoryInterceptor(container, toType, this.Name)));
             }
             else
             {
-                this.Container.RegisterType(null, this.factoryContractType, injectionFactory);
+                this.Container.RegisterFactory(this.factoryContractType, (container) => ProxyGenerator.CreateInterfaceProxyWithoutTarget(this.factoryContractType, new FactoryInterceptor(container, toType, this.Name)));
             }
         }
 

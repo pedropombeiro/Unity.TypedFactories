@@ -73,7 +73,7 @@
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Description/@EntryValue">Registers a typed factory using the Unity.TypedFactories package</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Field/=container/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Field/=container/Expression/@EntryValue">variableOfType("Microsoft.Practices.Unity.IUnityContainer")</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Field/=container/Expression/@EntryValue">variableOfType("Unity.IUnityContainer")</s:String>
 	<s:Int64 x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Field/=container/Order/@EntryValue">0</s:Int64>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Field/=TypeOfCreatedObject/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=AA73636FC96E664B9C9C78159E65B1FC/Field/=TypeOfCreatedObject/Expression/@EntryValue">completeType()</s:String>
