@@ -150,7 +150,7 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
-        public void given_instantiated_Sut_when_Create_is_called_and_ArgumentException_is_thrown_by_the_constructor_then_exception_is_rethrown_unwrapped_from_ResolutionFailedException()
+        public void given_instantiated_Sut_when_Create_is_called_and_invalidoperationexception_is_thrown_by_the_constructor_then_exception_is_rethrown_unwrapped_from_targetinvocationexception()
         {
             // Arrange
             using (var unityContainer = new UnityContainer())
@@ -159,10 +159,26 @@ namespace Unity.TypedFactories.Tests
                     .RegisterTypedFactory<ISomeInstanceFactory>()
                     .ForConcreteType<FaultyTestClass>();
 
-                // Act
                 var factory = unityContainer.Resolve<ISomeInstanceFactory>();
-                
-                Assert.Throws<System.Reflection.TargetInvocationException>(() => factory.Create());
+
+                try
+                {
+                    // Act
+                    var testClass2 = factory.Create();
+
+                    // Assert
+                    Assert.Fail("Factory method should have thrown System.Reflection.TargetInvocationException exception.");
+                }
+                catch(System.Reflection.TargetInvocationException tai)
+                {
+                    // Assert
+                    Assert.That(tai.InnerException?.GetType().Equals(typeof(InvalidOperationException)) ?? false);
+                }
+                catch(Exception ex)
+                {
+                    // Assert
+                    Assert.Fail($"Factory method should NOT have thrown exception of type {ex.GetType()}.");
+                }
             }
         }
 
@@ -186,8 +202,7 @@ namespace Unity.TypedFactories.Tests
         }
 
         [Test]
-        //[ExpectedException(typeof(ResolutionFailedException))]
-        public void given_instantiated_Sut_when_Create_is_called_with_one_of_the_parameters_not_resolvable_then_ResolutionFailedException_is_thrown()
+        public void given_instantiated_Sut_when_Create_is_called_with_one_of_the_parameters_not_resolvable_then_invalidoperationexception_is_thrown()
         {
             // Arrange
             using (var unityContainer = new UnityContainer())
@@ -197,10 +212,13 @@ namespace Unity.TypedFactories.Tests
                     .ForConcreteType<TestClass2>();
 
                 ISomeInstance someInstance = new SomeInstance();
+                var factory = unityContainer.Resolve<ITest2Factory>();
 
                 // Act
-                var factory = unityContainer.Resolve<ITest2Factory>();
-                Assert.Throws<System.InvalidOperationException>(() => factory.Create(null, someInstance, string.Empty));
+                TestDelegate testFactoryCreate = () => factory.Create(null, someInstance, string.Empty); 
+
+                // Assert
+                Assert.Throws<System.InvalidOperationException>(testFactoryCreate);
             }
         }
 
@@ -208,39 +226,42 @@ namespace Unity.TypedFactories.Tests
         public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_then_TestProperty1_on_resulting_TestClass_matches_specified_value()
         {
             // Arrange
-            var unityContainer = new UnityContainer();
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ITest1Factory>()
+                    .ForConcreteType<TestClass1>();
 
-            unityContainer
-                .RegisterTypedFactory<ITest1Factory>()
-                .ForConcreteType<TestClass1>();
+                const string TestValue = "TestValue";
 
-            const string TestValue = "TestValue";
+                // Act
+                var factory = unityContainer.Resolve<ITest1Factory>();
+                var testClass = factory.Create(TestValue);
 
-            // Act
-            var factory = unityContainer.Resolve<ITest1Factory>();
-            var testClass = factory.Create(TestValue);
-
-            // Assert
-            Assert.AreEqual(TestValue, testClass.TestProperty1);
+                // Assert
+                Assert.AreEqual(TestValue, testClass.TestProperty1);
+            }
         }
 
         [Test]
-        //[ExpectedException(typeof(ConstructorArgumentsMismatchException))]
-        public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_with_non_matching_parameter_name_then_ConstructorArgumentsMismatchException_is_thrown()
+        public void given_instantiated_Sut_when_Create_is_called_with_one_parameter_with_non_matching_parameter_name_then_invalidoperationexception_is_thrown()
         {
             // Arrange
-            var unityContainer = new UnityContainer();
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ITest2Factory>()
+                    .ForConcreteType<TestClass2NonMatchingName>();
 
-            unityContainer
-                .RegisterTypedFactory<ITest2Factory>()
-                .ForConcreteType<TestClass2NonMatchingName>();
+                ISomeInstance someInstance = new SomeInstance();
+                var factory = unityContainer.Resolve<ITest2Factory>();
 
-            const string TestValue = "TestValue";
-            ISomeInstance someInstance = new SomeInstance();
+                // Act
+                TestDelegate testFactoryCreate = () => factory.Create(null, someInstance, string.Empty); 
 
-            // Act
-            var factory = unityContainer.Resolve<ITest2Factory>();
-            Assert.Throws<System.InvalidOperationException>(() => factory.Create(TestValue, someInstance, string.Empty));
+                // Assert 
+                Assert.Throws<System.InvalidOperationException>(testFactoryCreate);
+            }
         }
 
         [Test]
@@ -323,18 +344,19 @@ namespace Unity.TypedFactories.Tests
         public void given_instantiated_Sut_when_Create_is_called_without_parameters_then_valid_instance_is_returned()
         {
             // Arrange
-            var unityContainer = new UnityContainer();
+            using (var unityContainer = new UnityContainer())
+            {
+                unityContainer
+                    .RegisterTypedFactory<ISomeInstanceFactory>()
+                    .ForConcreteType<SomeInstance>();
 
-            unityContainer
-                .RegisterTypedFactory<ISomeInstanceFactory>()
-                .ForConcreteType<SomeInstance>();
+                // Act
+                var factory = unityContainer.Resolve<ISomeInstanceFactory>();
+                var testClass = factory.Create();
 
-            // Act
-            var factory = unityContainer.Resolve<ISomeInstanceFactory>();
-            var testClass = factory.Create();
-
-            // Assert
-            Assert.IsInstanceOf<SomeInstance>(testClass);
+                // Assert
+                Assert.IsInstanceOf<SomeInstance>(testClass);
+            }
         }
 
         #endregion
